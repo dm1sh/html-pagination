@@ -1,0 +1,23 @@
+{
+  "name": "html-pagination",
+  "version": "1.0.0",
+  "description": "Package for html document pagination to fit container with fixed width",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dm1sh/html-pagination.git"
+  },
+  "keywords": [
+    "pagination",
+    "books"
+  ],
+  "author": "dm1sh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dm1sh/html-pagination/issues"
+  },
+  "homepage": "https://github.com/dm1sh/html-pagination#readme"
+}
