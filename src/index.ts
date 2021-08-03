@@ -1,4 +1,4 @@
-export abstract class CacheInterface {
+export declare abstract class CacheInterface {
   abstract g(key: string): string;
   abstract s(key: string, value: string): void;
 }
@@ -15,7 +15,7 @@ declare function getPage(n: number): string;
  * @param container HTML element which will store content to display
  * @param cache Class implementing `g` and `s` methods for getting and setting elements of KV storage
  */
-export function setup(
+export declare function setup(
   content: HTMLElement,
   container: HTMLElement,
   cache: CacheInterface

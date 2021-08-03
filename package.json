@@ -2,9 +2,19 @@
   "name": "html-pagination",
   "version": "1.0.0",
   "description": "Package for html document pagination to fit container with fixed width",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "./lib/**/*"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "test": "jest --config jestconfig.json --passWithNoTests",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run format && git add -A src",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
@@ -19,5 +29,11 @@
   "bugs": {
     "url": "https://github.com/dm1sh/html-pagination/issues"
   },
-  "homepage": "https://github.com/dm1sh/html-pagination#readme"
+  "homepage": "https://github.com/dm1sh/html-pagination#readme",
+  "devDependencies": {
+    "@types/jest": "^26.0.24",
+    "jest": "^27.0.6",
+    "ts-jest": "^27.0.4",
+    "typescript": "^4.3.5"
+  }
 }
