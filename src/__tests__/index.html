@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      * {
+        padding: 0;
+        margin: 0;
+      }
+      #content {
+        display: none;
+      }
+      .appContainer {
+        height: 200px;
+        width: 200px;
+        display: flex;
+        border: 1px black solid;
+      }
+      #container {
+        overflow: auto;
+      }
+    </style>
+    <div id="content">
+      <div>
+        <h1>Hello, my dear friend</h1>
+        <p>
+          You can run npm list -g to see which global libraries are installed
+          and where they're located. Use npm list -g | head -1 for truncated
+          output showing just the path. If you want to display only main
+          packages not its sub-packages which installs along with it - you can
+          use - npm list --depth=0 which will show all packages and for getting
+          only globally installed packages, just add -g i.e. npm list -g
+          --depth=0.
+        </p>
+      </div>
+    </div>
+    <div class="appContainer">
+      <div id="container"></div>
+    </div>
+    <script type="module">
+      import { HTMLPagination } from "./index.js";
+
+      const content = document.getElementById("content");
+      const container = document.getElementById("container");
+
+      class ci {
+        g(key) {
+          localStorage.setItem("book" + key);
+        }
+
+        s(key, value) {
+          localStorage.getItem("book" + key, value);
+        }
+      }
+
+      const pg = new HTMLPagination(content, container, ci);
+
+      const r = async (prev) => {
+        try {
+          const res = pg.getPageBreak(prev, 100);
+          await setTimeout(() => r(res), 1000);
+        } catch (e) {
+          r(0);
+        }
+      };
+
+      r(0);
+    </script>
+  </body>
+</html>
