@@ -1,12 +1,13 @@
 import { CacheInterface } from "./cache";
 import { isElementNode, isTextNode, TextNode } from "./types";
+import { binSearch } from "./utils";
 
 class HTMLPagination {
   content: HTMLElement;
   container: HTMLElement;
   cache: CacheInterface;
 
-  elementPositions: [number, TextNode][];
+  elementPositions: [number, Node][];
   idPositions: Map<string, number>;
 
   /**
@@ -33,7 +34,7 @@ class HTMLPagination {
     const from = 0;
     const to = 1;
 
-    return this.getFromRange(from, to);
+    return this.getContentFromRange(from, to);
   }
 
   /**
@@ -58,26 +59,105 @@ class HTMLPagination {
   }
 
   /**
+   * Finds position for next page break
+   * initialJump may be computed in a clever way
+   */
+  getPageBreak(start: number, initialJump: number) {
+    let previousEnd = this.getMaxPosition();
+    let end = this.getNextSpaceForPosition(start + initialJump);
+
+    this.getContentFromRange(start, end);
+    while (!this.scrollNecessary() && end < this.getMaxPosition()) {
+      previousEnd = end;
+      end = this.getNextSpaceForPosition(end + 1);
+      this.getContentFromRange(start, end);
+    }
+
+    while (this.scrollNecessary() && end > start) {
+      previousEnd = end;
+      end = this.getPreviousSpaceForPosition(end - 1);
+      this.getContentFromRange(start, end);
+    }
+
+    if (start === end) return previousEnd;
+    else return end;
+  }
+
+  /**
+   * Gets next space or gap between elements for position
+   */
+  getNextSpaceForPosition(startPos: number): number {
+    const nodeIndex = this.getElementIndexForPosition(startPos);
+    const [nodePosition, node] = this.elementPositions[nodeIndex];
+
+    let nodeOffset = startPos - nodePosition;
+    const str = node.nodeValue || "";
+    while (nodeOffset < str.length && str.charAt(nodeOffset) !== " ")
+      nodeOffset++;
+
+    if (nodeOffset === str.length) {
+      if (nodeIndex === this.elementPositions.length - 1)
+        return this.getMaxPosition();
+      else return this.elementPositions[nodeIndex + 1][0];
+    } else {
+      return this.elementPositions[nodeIndex][0] + nodeOffset;
+    }
+  }
+
+  /**
+   * Gets previous space or gap between elements for position
+   */
+  getPreviousSpaceForPosition(startPos: number): number {
+    const nodeIndex = this.getElementIndexForPosition(startPos);
+    const [nodePosition, node] = this.elementPositions[nodeIndex];
+
+    let nodeOffset = startPos - nodePosition;
+    const str = node.nodeValue || "";
+    while (nodeOffset > 0 && str.charAt(nodeOffset) !== " ") nodeOffset--;
+
+    return this.elementPositions[nodeIndex][0] + nodeOffset;
+  }
+
+  /**
+   * Checks if container is overflowing with content
+   */
+  scrollNecessary(): boolean {
+    return this.container.clientHeight < this.container.scrollHeight;
+  }
+
+  /**
+   * Returns end position of content
+   */
+  getMaxPosition(): number {
+    const [offset, element] =
+      this.elementPositions[this.elementPositions.length - 1];
+    return offset + (element.nodeValue?.length || 0);
+  }
+
+  /**
+   * Wrapper for `binSearch` util to find index of element for position
+   */
+  getElementIndexForPosition(pos: number): number {
+    return binSearch(
+      this.elementPositions,
+      pos,
+      (i) => this.elementPositions[i][0]
+    );
+  }
+
+  /**
    * Finds node inside which `pos` is located. Returns node positions and itself
    */
   getElementForPosition(pos: number): [number, Node] {
-    let s = 0,
-      e = this.elementPositions.length - 1;
+    const elementIndex = this.getElementIndexForPosition(pos);
 
-    while (s <= e) {
-      const c = (s + e) >> 1;
-      if (pos > this.elementPositions[c][0]) s = c + 1;
-      else if (pos < this.elementPositions[c][0]) e = c - 1;
-      else return this.elementPositions[c];
-    }
-
-    return this.elementPositions[s - 1];
+    return this.elementPositions[elementIndex];
   }
 
   /**
    * Sets `container` element content and return as string html content between `from` and `to`
    */
-  getFromRange(from: number, to: number): string {
+  getContentFromRange(from: number, to: number): string {
     this.container.innerHTML = "";
     const range = new Range();
 
