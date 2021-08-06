@@ -5,7 +5,7 @@ import { binSearch } from "./utils";
 class HTMLPagination {
   content: HTMLElement;
   container: HTMLElement;
-  cache: CacheInterface;
+  cache: CacheInterface | undefined;
   initialJump: number;
 
   elementPositions: [number, Node][];
@@ -25,8 +25,8 @@ class HTMLPagination {
   constructor(
     content: HTMLElement,
     container: HTMLElement,
-    cache: CacheInterface,
-    initialJump: number
+    initialJump: number,
+    cache?: CacheInterface
   ) {
     this.content = content;
     this.container = container;
@@ -177,12 +177,19 @@ class HTMLPagination {
   }
 
   /**
-   * Returns end position of content
+   * @returns end position of content
    */
   get getMaxPosition(): number {
     const [offset, element] =
       this.elementPositions[this.elementPositions.length - 1];
     return offset + (element.nodeValue?.length || 0);
+  }
+
+  /**
+   * @returns number of computed pages (may not represent current page)
+   */
+  get computedPagesNumber(): number {
+    return this.pages.length - 1;
   }
 
   /**
