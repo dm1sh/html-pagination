@@ -1,6 +1,6 @@
 {
   "name": "html-pagination",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Package for html document pagination to fit container with fixed width",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -8,8 +8,9 @@
     "./lib/**/*"
   ],
   "scripts": {
-    "test:browser": "npm run build -- --module 'esnext' && cp ./src/__tests__/index.html ./lib/ && bash -c 'for module in \".\\/cache\" \".\\/types\" \".\\/utils\"; do sed -i \"s/$module/$module.js/g\" ./lib/index.js; done' && serve -s lib",
-    "build": "rm -rf lib && tsc",
+    "test:browser": "npm run build && cp ./src/__tests__/index.html ./lib/ && serve -s lib",
+    "build": "node esbuild.config.js && npm run type-check",
+    "type-check": "tsc --emitDeclarationOnly --outDir lib",
     "lint": "eslint .",
     "format": "prettier --write .",
     "test": "jest --config jestconfig.json --passWithNoTests",
@@ -40,10 +41,10 @@
     "esbuild": "^0.12.17",
     "esbuild-jest": "^0.5.0",
     "eslint": "^7.32.0",
-    "jest": "^27.0.6",
-    "typescript": "^4.3.5",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.4.0",
-    "prettier": "^2.3.2"
+    "jest": "^27.0.6",
+    "prettier": "^2.3.2",
+    "typescript": "^4.3.5"
   }
 }
