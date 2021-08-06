@@ -16,8 +16,8 @@
         display: none;
       }
       .appContainer {
-        height: 200px;
-        width: 200px;
+        height: 300px;
+        width: 300px;
         display: flex;
         border: 1px black solid;
       }
@@ -26,18 +26,7 @@
       }
     </style>
     <div id="content">
-      <div>
-        <h1>Hello, my dear friend</h1>
-        <p>
-          You can run npm list -g to see which global libraries are installed
-          and where they're located. Use npm list -g | head -1 for truncated
-          output showing just the path. If you want to display only main
-          packages not its sub-packages which installs along with it - you can
-          use - npm list --depth=0 which will show all packages and for getting
-          only globally installed packages, just add -g i.e. npm list -g
-          --depth=0.
-        </p>
-      </div>
+      <main><h1>About me</h1><p>Hello, I'm Shishkov Dmitriy. I'm 17 years old computer programmer. I'm also do photography as a hobby. As for spring 2021, I'm studying in "Ugra physico-mathematical boarding school" in Khanty-Mansiysk. </p><p>My specialization is frontend web development. All web services and application I deploy on my own. For it I've used <a href="https://www.docker.com">Docker</a>and <a href="https://docs.docker.com/compose">docker-compose</a>for deployment on my VPS. Currently my server is powered with <a href="https://dokku.com">Dokku</a>. For smaller projects I also used some PaaS like <a href="https://heroku.com">Heroku</a>and <a href="https://vercel.com">Vercel Now</a>. </p><p>I also do in for C development. In <a href="/projects">projects</a>section you can see some of my developments in this langualge. Even this site is powered by page generator written in C. </p><p>More formally, this is my stack:</p><ul><li>JS <ul><li><a href="https://nodejs.org">NodeJS</a></li><li><a href="https://www.typescriptlang.org">TypeScript</a></li><li><a href="https://reactjs.org">React</a>: <ul><li><a href="https://reactrouter.com">React Router</a></li><li><a href="https://github.com/molefrog/wouter">Wouter</a></li><li><a href="https://www.framer.com/motion">Framer Motion</a></li><li><a href="https://styled-components.com" >Styled Components</a ></li></ul></li><li><a href="https://nextjs.org">Next.js</a></li><li><a href="https://graphql.org">Graphql</a>: <ul><li><a href="https://www.apollographql.com">Apollo</a></li></ul></li><li><a href="https://www.prisma.io">Prisma</a></li><li><a href="https://www.mongodb.com">MongoDB</a><ul><li><a href="https://mongoosejs.com">Mongoose</a></li></ul></li><li><a href="https://www.postgresql.org">PostgreSQL</a><ul><li><a href="https://node-postgres.com">Node-postgres</a></li></ul></li><li><a href="https://www.npmjs.com/package/jsonwebtoken" >jsonwebtoken</a ></li><li><a href="https://sendgrid.com">SendGrid</a></li><li><a href="https://github.com/jakearchibald/idb">IndexedDB</a></li><li><a href="https://immerjs.github.io/immer">Immer</a></li><li><a href="https://expressjs.com">ExpressJS</a></li><li>Dev environment: <ul><li><a href="https://eslint.org">ESLint</a></li><li><a href="https://prettier.io">Prettier</a></li><li><a href="https://jestjs.io">Jest</a></li><li><a href="https://mochajs.org">Mocha</a></li><li><a href="https://webpack.js.org">Webpack</a></li><li><a href="https://www.snowpack.dev">Snowpack</a></li><li><a href="https://esbuild.github.io">Esbuild</a></li><li><a href="https://storybook.js.org">Storybook</a></li><li><a href="https://babeljs.io">Babel</a></li></ul></li></ul></li><li>Deployment: <ul><li><a href="https://www.docker.com">Docker</a></li><li><a href="https://docs.docker.com/compose">docker-compose</a></li><li><a href="https://dokku.com">Dokku</a></li><li><a href="https://heroku.com">Heroku</a></li><li><a href="https://www.oracle.com/cloud" >Oracle Cloud Infrastructure</a ></li><li><a href="https://vercel.com">Vercel Now</a></li></ul></li><li>C</li><li><a href="https://www.python.org">Python</a><ul><li><a href="https://fastapi.tiangolo.com">FastAPI</a></li></ul></li><li><a href="http://www.lua.org">Lua</a></li></ul><p>See <a href="/contacts">contacts</a>to get in touch with me.</p><p>You can reach my resume following <a href="https://github.com/dm1sh/dm1sh/blob/main/resume.md" >this link</a ></p></main>
     </div>
     <div class="appContainer">
       <div id="container"></div>
@@ -58,18 +47,7 @@
         }
       }
 
-      const pg = new HTMLPagination(content, container, ci);
-
-      const r = async (prev) => {
-        try {
-          const res = pg.getPageBreak(prev, 100);
-          await setTimeout(() => r(res), 1000);
-        } catch (e) {
-          r(0);
-        }
-      };
-
-      r(0);
+      window.pg = new HTMLPagination(content, container, ci, 500);
     </script>
   </body>
 </html>

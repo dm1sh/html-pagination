@@ -6,39 +6,77 @@ class HTMLPagination {
   content: HTMLElement;
   container: HTMLElement;
   cache: CacheInterface;
+  initialJump: number;
 
   elementPositions: [number, Node][];
   idPositions: Map<string, number>;
+  pages: number[];
 
   /**
+   * /**
    * @param content HTML element with html content to display paginationly
    * @param container HTML element which will store content to display
-   * @param cache Class implementing `g` and `s` methods for getting and setting elements of KV storage
+   * @param cache Class implementing `g` and `s` methods for getting and
+   *  setting elements of KV storage
+   * @param initialJump Initial estimated number of characrers and
+   *  elements per page. Good value migth icreace pages calculation speed and
+   *  page number accuracy before full book is processed
    */
   constructor(
     content: HTMLElement,
     container: HTMLElement,
-    cache: CacheInterface
+    cache: CacheInterface,
+    initialJump: number
   ) {
     this.content = content;
     this.container = container;
     this.cache = cache;
+    this.initialJump = initialJump;
 
     this.elementPositions = new Array();
     this.idPositions = new Map();
+    this.pages = [0];
 
     this.computeElementsPositions();
   }
 
+  /**
+   * Method computes book's pages till specified number,
+   * sets container's content to `n`th page and returns it as string
+   * `n` starts from 1
+   */
   getPage(n: number): string {
-    const from = 0;
-    const to = 1;
+    if (
+      n < 1 ||
+      (n > this.pages.length - 1 &&
+        this.pages[this.pages.length - 1] === this.getMaxPosition)
+    )
+      return "";
+
+    let from: number = 0,
+      to: number = 0;
+
+    if (n <= this.pages.length - 1) {
+      from = this.pages[n - 1];
+      to = this.pages[n];
+    } else {
+      for (
+        let i = this.pages.length - 1;
+        i < n && this.pages[this.pages.length - 1] !== this.getMaxPosition;
+        i++
+      ) {
+        from = this.pages[i];
+        to = this.getPageBreak(from);
+        this.pages.push(to);
+      }
+    }
 
     return this.getContentFromRange(from, to);
   }
 
   /**
-   * Computes html elements and text nodes positions. Must be run only on first setup
+   * Computes html elements and text nodes positions.
+   * Must be run only on first setup
    */
   computeElementsPositions(): void {
     const recursive = (currentPosition: number, root: Node): number => {
@@ -60,27 +98,40 @@ class HTMLPagination {
 
   /**
    * Finds position for next page break
-   * initialJump may be computed in a clever way
    */
-  getPageBreak(start: number, initialJump: number) {
-    let previousEnd = this.getMaxPosition();
-    let end = this.getNextSpaceForPosition(start + initialJump);
+  getPageBreak(start: number) {
+    let previousEnd = this.getMaxPosition;
+    let end = this.getNextSpaceForPosition(
+      Math.min(start + this.initialJump, this.getMaxPosition)
+    );
 
     this.getContentFromRange(start, end);
-    while (!this.scrollNecessary() && end < this.getMaxPosition()) {
+    while (!this.scrollNecessary && end < this.getMaxPosition) {
       previousEnd = end;
       end = this.getNextSpaceForPosition(end + 1);
       this.getContentFromRange(start, end);
     }
 
-    while (this.scrollNecessary() && end > start) {
+    while (this.scrollNecessary && end > start) {
       previousEnd = end;
       end = this.getPreviousSpaceForPosition(end - 1);
       this.getContentFromRange(start, end);
     }
 
     if (start === end) return previousEnd;
-    else return end;
+    else {
+      this.initialJump = end - start;
+      return end;
+    }
+  }
+
+  /**
+   * Tries to predict number of pages if not calculated exaclty yet
+   */
+  get pagesNumber() {
+    if (this.pages[this.pages.length - 1] === this.getMaxPosition)
+      return this.pages.length - 1;
+    else return Math.round(this.getMaxPosition / this.initialJump);
   }
 
   /**
@@ -97,7 +148,7 @@ class HTMLPagination {
 
     if (nodeOffset === str.length) {
       if (nodeIndex === this.elementPositions.length - 1)
-        return this.getMaxPosition();
+        return this.getMaxPosition;
       else return this.elementPositions[nodeIndex + 1][0];
     } else {
       return this.elementPositions[nodeIndex][0] + nodeOffset;
@@ -121,14 +172,14 @@ class HTMLPagination {
   /**
    * Checks if container is overflowing with content
    */
-  scrollNecessary(): boolean {
+  get scrollNecessary(): boolean {
     return this.container.clientHeight < this.container.scrollHeight;
   }
 
   /**
    * Returns end position of content
    */
-  getMaxPosition(): number {
+  get getMaxPosition(): number {
     const [offset, element] =
       this.elementPositions[this.elementPositions.length - 1];
     return offset + (element.nodeValue?.length || 0);
@@ -146,7 +197,8 @@ class HTMLPagination {
   }
 
   /**
-   * Finds node inside which `pos` is located. Returns node positions and itself
+   * Finds node inside which `pos` is located.
+   * @returns node positions and itself
    */
   getElementForPosition(pos: number): [number, Node] {
     const elementIndex = this.getElementIndexForPosition(pos);
@@ -155,7 +207,8 @@ class HTMLPagination {
   }
 
   /**
-   * Sets `container` element content and return as string html content between `from` and `to`
+   * Sets `container` element content and
+   * return as string html content between `from` and `to`
    */
   getContentFromRange(from: number, to: number): string {
     this.container.innerHTML = "";

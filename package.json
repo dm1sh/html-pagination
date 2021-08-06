@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test:browser": "npm run build -- --module 'esnext' && cp ./src/__tests__/index.html ./lib/ && bash -c 'for module in \".\\/cache\" \".\\/types\" \".\\/utils\"; do sed -i \"s/$module/$module.js/g\" ./lib/index.js; done' && serve -s lib",
-    "build": "tsc",
+    "build": "rm -rf lib && tsc",
     "test": "jest --config jestconfig.json --passWithNoTests",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",

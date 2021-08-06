@@ -24,7 +24,7 @@ describe("Text position stuff", () => {
 
     container.innerHTML = "";
 
-    hp = new HTMLPagination(content, container, new Cache());
+    hp = new HTMLPagination(content, container, new Cache(), 100);
   });
 
   it("computes positions for each text node", () => {
