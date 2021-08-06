@@ -9,11 +9,11 @@ It is a plugin for HTML document pagination to fit fixed-sized container. This o
 In a browser environment import `HTMLPagination` class and create it's instance:
 
 ```js
-import { HTMLPagination } from "html-pagination";
+import { HTMLPagination } from 'html-pagination';
 
 const pg = new HTMLPagination(
-  document.getElementById("content"), // HTML element with html content you want to paginate in it
-  document.getElementById("container"), // HTML element which will display page content. It must add scrollbar on overflow
+  document.getElementById('content'), // HTML element with html content you want to paginate in it
+  document.getElementById('container'), // HTML element which will display page content. It must add scrollbar on overflow
   100 // Initial number of characters per page. Good value will increase speed of first page computation
 );
 ```

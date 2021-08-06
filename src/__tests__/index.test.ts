@@ -2,12 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { CacheInterface, HTMLPagination } from "../index";
+import { CacheInterface, HTMLPagination } from '../index';
 
 let hp: HTMLPagination;
 
-const content = document.createElement("div");
-const container = document.createElement("div");
+const content = document.createElement('div');
+const container = document.createElement('div');
 class Cache extends CacheInterface {
   g(key: string) {
     return localStorage.getItem(key);
@@ -17,33 +17,33 @@ class Cache extends CacheInterface {
   }
 }
 
-describe("Text position stuff", () => {
+describe('Text position stuff', () => {
   beforeEach(() => {
-    content.innerHTML = "";
-    content.innerHTML = "<div><p>aa</p><p>bb<span>cc</span>dd</p></div>";
+    content.innerHTML = '';
+    content.innerHTML = '<div><p>aa</p><p>bb<span>cc</span>dd</p></div>';
 
-    container.innerHTML = "";
+    container.innerHTML = '';
 
     hp = new HTMLPagination(content, container, 100, new Cache());
   });
 
-  it("computes positions for each text node", () => {
+  it('computes positions for each text node', () => {
     expect(hp.elementPositions.map((el) => el[0])).toEqual([0, 2, 4, 6]);
   });
 
-  it("gets element by position", () => {
+  it('gets element by position', () => {
     expect(hp.getElementForPosition(0)[0]).toBe(0);
     expect(hp.getElementForPosition(1)[0]).toBe(0);
     expect(hp.getElementForPosition(2)[0]).toBe(2);
     expect(hp.getElementForPosition(3)[0]).toBe(2);
   });
 
-  it("gets html content for range of text", () => {
+  it('gets html content for range of text', () => {
     expect(hp.getContentFromRange(0, 8)).toEqual(
-      "<p>aa</p><p>bb<span>cc</span>dd</p>"
+      '<p>aa</p><p>bb<span>cc</span>dd</p>'
     );
-    expect(hp.getContentFromRange(0, 3)).toEqual("<p>aa</p><p>b</p>");
-    expect(hp.getContentFromRange(5, 7)).toEqual("<span>c</span>d");
+    expect(hp.getContentFromRange(0, 3)).toEqual('<p>aa</p><p>b</p>');
+    expect(hp.getContentFromRange(5, 7)).toEqual('<span>c</span>d');
   });
 });
 

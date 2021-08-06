@@ -1,6 +1,6 @@
-import { CacheInterface } from "./cache";
-import { isElementNode, isTextNode, TextNode } from "./types";
-import { binSearch } from "./utils";
+import { CacheInterface } from './cache';
+import { isElementNode, isTextNode } from './types';
+import { binSearch } from './utils';
 
 class HTMLPagination {
   content: HTMLElement;
@@ -33,7 +33,7 @@ class HTMLPagination {
     this.cache = cache;
     this.initialJump = initialJump;
 
-    this.elementPositions = new Array();
+    this.elementPositions = [];
     this.idPositions = new Map();
     this.pages = [0];
 
@@ -51,10 +51,10 @@ class HTMLPagination {
       (n > this.pages.length - 1 &&
         this.pages[this.pages.length - 1] === this.getMaxPosition)
     )
-      return "";
+      return '';
 
-    let from: number = 0,
-      to: number = 0;
+    let from = 0,
+      to = 0;
 
     if (n <= this.pages.length - 1) {
       from = this.pages[n - 1];
@@ -99,7 +99,7 @@ class HTMLPagination {
   /**
    * Finds position for next page break
    */
-  getPageBreak(start: number) {
+  getPageBreak(start: number): number {
     let previousEnd = this.getMaxPosition;
     let end = this.getNextSpaceForPosition(
       Math.min(start + this.initialJump, this.getMaxPosition)
@@ -128,7 +128,7 @@ class HTMLPagination {
   /**
    * Tries to predict number of pages if not calculated exaclty yet
    */
-  get pagesNumber() {
+  get pagesNumber(): number {
     if (this.pages[this.pages.length - 1] === this.getMaxPosition)
       return this.pages.length - 1;
     else return Math.round(this.getMaxPosition / this.initialJump);
@@ -142,8 +142,8 @@ class HTMLPagination {
     const [nodePosition, node] = this.elementPositions[nodeIndex];
 
     let nodeOffset = startPos - nodePosition;
-    const str = node.nodeValue || "";
-    while (nodeOffset < str.length && str.charAt(nodeOffset) !== " ")
+    const str = node.nodeValue || '';
+    while (nodeOffset < str.length && str.charAt(nodeOffset) !== ' ')
       nodeOffset++;
 
     if (nodeOffset === str.length) {
@@ -163,8 +163,8 @@ class HTMLPagination {
     const [nodePosition, node] = this.elementPositions[nodeIndex];
 
     let nodeOffset = startPos - nodePosition;
-    const str = node.nodeValue || "";
-    while (nodeOffset > 0 && str.charAt(nodeOffset) !== " ") nodeOffset--;
+    const str = node.nodeValue || '';
+    while (nodeOffset > 0 && str.charAt(nodeOffset) !== ' ') nodeOffset--;
 
     return this.elementPositions[nodeIndex][0] + nodeOffset;
   }
@@ -218,7 +218,7 @@ class HTMLPagination {
    * return as string html content between `from` and `to`
    */
   getContentFromRange(from: number, to: number): string {
-    this.container.innerHTML = "";
+    this.container.innerHTML = '';
     const range = new Range();
 
     const [startPosition, startElement] = this.getElementForPosition(from);
