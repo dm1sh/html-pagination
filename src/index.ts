@@ -3,17 +3,16 @@ import { isElementNode, isTextNode } from './types';
 import { binSearch } from './utils';
 
 class HTMLPagination {
-  content: HTMLElement;
-  container: HTMLElement;
-  cache: CacheInterface | undefined;
-  initialJump: number;
+  private content: HTMLElement;
+  private container: HTMLElement;
+  private cache: CacheInterface | undefined;
+  private initialJump: number;
 
-  elementPositions: [number, Node][];
-  idPositions: Map<string, number>;
-  pages: number[];
+  private elementPositions: [number, Node][];
+  private idPositions: Map<string, number>;
+  private pages: number[];
 
   /**
-   * /**
    * @param content HTML element with html content to display paginationly
    * @param container HTML element which will store content to display
    * @param cache Class implementing `g` and `s` methods for getting and
@@ -43,6 +42,7 @@ class HTMLPagination {
   /**
    * Method computes book's pages till specified number,
    * sets container's content to `n`th page and returns it as string
+   *
    * `n` starts from 1
    */
   getPage(n: number): string {
@@ -78,7 +78,7 @@ class HTMLPagination {
    * Computes html elements and text nodes positions.
    * Must be run only on first setup
    */
-  computeElementsPositions(): void {
+  private computeElementsPositions(): void {
     const recursive = (currentPosition: number, root: Node): number => {
       if (isTextNode(root)) {
         this.elementPositions.push([currentPosition, root]);
@@ -99,7 +99,7 @@ class HTMLPagination {
   /**
    * Finds position for next page break
    */
-  getPageBreak(start: number): number {
+  private getPageBreak(start: number): number {
     let previousEnd = this.getMaxPosition;
     let end = this.getNextSpaceForPosition(
       Math.min(start + this.initialJump, this.getMaxPosition)
@@ -137,7 +137,7 @@ class HTMLPagination {
   /**
    * Gets next space or gap between elements for position
    */
-  getNextSpaceForPosition(startPos: number): number {
+  private getNextSpaceForPosition(startPos: number): number {
     const nodeIndex = this.getElementIndexForPosition(startPos);
     const [nodePosition, node] = this.elementPositions[nodeIndex];
 
@@ -158,7 +158,7 @@ class HTMLPagination {
   /**
    * Gets previous space or gap between elements for position
    */
-  getPreviousSpaceForPosition(startPos: number): number {
+  private getPreviousSpaceForPosition(startPos: number): number {
     const nodeIndex = this.getElementIndexForPosition(startPos);
     const [nodePosition, node] = this.elementPositions[nodeIndex];
 
@@ -172,14 +172,14 @@ class HTMLPagination {
   /**
    * Checks if container is overflowing with content
    */
-  get scrollNecessary(): boolean {
+  private get scrollNecessary(): boolean {
     return this.container.clientHeight < this.container.scrollHeight;
   }
 
   /**
    * @returns end position of content
    */
-  get getMaxPosition(): number {
+  private get getMaxPosition(): number {
     const [offset, element] =
       this.elementPositions[this.elementPositions.length - 1];
     return offset + (element.nodeValue?.length || 0);
@@ -195,7 +195,7 @@ class HTMLPagination {
   /**
    * Wrapper for `binSearch` util to find index of element for position
    */
-  getElementIndexForPosition(pos: number): number {
+  private getElementIndexForPosition(pos: number): number {
     return binSearch(
       this.elementPositions,
       pos,
@@ -207,7 +207,7 @@ class HTMLPagination {
    * Finds node inside which `pos` is located.
    * @returns node positions and itself
    */
-  getElementForPosition(pos: number): [number, Node] {
+  private getElementForPosition(pos: number): [number, Node] {
     const elementIndex = this.getElementIndexForPosition(pos);
 
     return this.elementPositions[elementIndex];
@@ -217,7 +217,7 @@ class HTMLPagination {
    * Sets `container` element content and
    * return as string html content between `from` and `to`
    */
-  getContentFromRange(from: number, to: number): string {
+  private getContentFromRange(from: number, to: number): string {
     this.container.innerHTML = '';
     const range = new Range();
 
